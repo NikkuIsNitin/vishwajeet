@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+  --font-heading: "Fraunces", "Iowan Old Style", "Palatino Linotype", serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+:root {
+  --background: #16140f;
+  --foreground: #f3ece0;
+  --card: rgb(22 20 15 / 0.88);
+  --card-foreground: #f3ece0;
+  --popover: #1c1914;
+  --popover-foreground: #f3ece0;
+  --primary: #f25c2a;
+  --primary-foreground: #16140f;
+  --secondary: #2a261f;
+  --secondary-foreground: #f3ece0;
+  --muted: #241f19;
+  --muted-foreground: #b7aea2;
+  --accent: #2c261f;
+  --accent-foreground: #f3ece0;
+  --border: rgb(243 236 224 / 0.16);
+  --input: rgb(243 236 224 / 0.2);
+  --ring: #f25c2a;
+  --radius: 0.7rem;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    min-height: 100svh;
+  }
+
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+.scene-label {
+  pointer-events: none;
+  white-space: nowrap;
+  border-radius: 0.4rem;
+  background: rgb(22 20 15 / 0.86);
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  color: #f3ece0;
+}
+
+@media (max-width: 1023px) {
+  .scene-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
