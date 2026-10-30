@@ -1,7 +1,7 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
-import { RoomSafe } from "@/components/room-safe"
 import { Badge } from "@/components/ui/badge"
+import { stillFor, stills } from "@/data/photos"
 import {
   also,
   extra,
@@ -15,27 +15,25 @@ import {
   type Role,
 } from "@/data/resume"
 
-const Massing = lazy(async () => {
-  const module = await import("@/components/massing")
-  return { default: module.Massing }
-})
-
 export default function App() {
   const reduce = useReducedMotion()
   const [focus, setFocus] = useState("home")
-  const [roomOn, setRoomOn] = useState(false)
   const [lane, setLane] = useState<"all" | Role>("all")
   const visible = useMemo(
     () => (lane === "all" ? work : work.filter((item) => item.roles.includes(lane))),
     [lane],
   )
   const activeWork = visible.find((item) => item.id === focus)
-  const roomFocus = activeWork?.id ?? (focus === "home" ? "home" : focus === "about" ? "festival" : focus)
+  const stillId = activeWork?.id ?? (focus === "home" ? "home" : focus)
+  const still = stillFor(stillId)
   const showFilm = focus === "home"
 
   useEffect(() => {
-    if (!showFilm) setRoomOn(true)
-  }, [showFilm])
+    Object.values(stills).forEach((src) => {
+      const image = new window.Image()
+      image.src = src
+    })
+  }, [])
 
   useEffect(() => {
     const ids = ["home", "work", ...visible.map((item) => item.id), "about", "contact"]
@@ -75,30 +73,43 @@ export default function App() {
       </a>
 
       <div className="fixed inset-0 z-0">
-        {roomOn ? (
-          <RoomSafe>
-            <Suspense fallback={null}>
-              <div className={`h-full w-full ${showFilm ? "pointer-events-none opacity-0" : ""}`}>
-                <Massing focus={roomFocus} onPick={jump} />
-              </div>
-            </Suspense>
-          </RoomSafe>
-        ) : null}
-        <div className={`hero-film ${showFilm ? "opacity-100" : "opacity-0"}`} aria-hidden={!showFilm}>
-          <img src="/media/hero-poster.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
-          {reduce ? null : (
-            <video
-              className="relative h-full w-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster="/media/hero-poster.jpg"
-            >
-              <source src="/media/hero.mp4" type="video/mp4" />
-            </video>
+        <img src="/media/hero-poster.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <AnimatePresence mode="sync">
+          {showFilm ? (
+            reduce ? null : (
+              <motion.div
+                key="film"
+                className="absolute inset-0"
+                initial={false}
+                animate={{ opacity: 1 }}
+                exit={reduce ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.45 }}
+              >
+                <video
+                  className="h-full w-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  poster="/media/hero-poster.jpg"
+                >
+                  <source src="/media/hero.mp4" type="video/mp4" />
+                </video>
+              </motion.div>
+            )
+          ) : (
+            <motion.img
+              key={still}
+              src={still}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduce ? undefined : { opacity: 0 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            />
           )}
-        </div>
+        </AnimatePresence>
         <div className="scene-vignette" />
       </div>
 

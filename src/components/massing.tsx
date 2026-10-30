@@ -2,7 +2,7 @@ import { ContactShadows, Environment, Image, MeshReflectorMaterial, RoundedBox }
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
-import { frames, portrait, standing } from "@/data/photos"
+import { frames, pickTarget } from "@/data/photos"
 
 type View = { from: [number, number, number]; to: [number, number, number] }
 
@@ -30,7 +30,7 @@ function useReduced() {
   return reduce
 }
 
-function Photo({
+function Panel({
   url,
   position,
   scale,
@@ -49,26 +49,26 @@ function Photo({
 
   useFrame((_, delta) => {
     if (!glow.current) return
-    glow.current.emissiveIntensity = THREE.MathUtils.damp(glow.current.emissiveIntensity, active ? 0.28 : 0.04, 6, delta)
+    glow.current.emissiveIntensity = THREE.MathUtils.damp(glow.current.emissiveIntensity, active ? 0.32 : 0.05, 6, delta)
   })
 
   return (
     <group position={position} rotation={rotation}>
-      <mesh position={[0, 0, -0.04]} castShadow>
-        <planeGeometry args={[scale[0] + 0.1, scale[1] + 0.1]} />
+      <mesh position={[0, 0, -0.035]} castShadow>
+        <boxGeometry args={[scale[0] + 0.08, scale[1] + 0.08, 0.05]} />
         <meshStandardMaterial
           ref={glow}
-          color="#16120f"
-          roughness={0.5}
-          metalness={0.12}
+          color="#1a1713"
+          roughness={0.38}
+          metalness={0.42}
           emissive="#f25c2a"
-          emissiveIntensity={0.04}
+          emissiveIntensity={0.05}
         />
       </mesh>
       <Image
         url={url}
         scale={scale}
-        radius={0.03}
+        radius={0.012}
         toneMapped
         zoom={1}
         onClick={(event) => {
@@ -263,31 +263,20 @@ function Scene({ focus, onPick }: { focus: string; onPick: (id: string) => void 
       <Floor />
       <ContactShadows opacity={0.32} scale={20} blur={2.8} far={6} />
 
-      <Photo
-        url={portrait.url}
-        position={portrait.position}
-        scale={portrait.scale}
-        active={focus === "home"}
-        onPick={() => onPick("home")}
-      />
-      <Photo
-        url={standing.url}
-        position={standing.position}
-        scale={standing.scale}
-        rotation={standing.rotation}
-        active={focus === "contact"}
-        onPick={() => onPick("contact")}
-      />
-
       {frames.map((frame) => (
-        <Photo
+        <Panel
           key={frame.id}
           url={frame.url}
           position={frame.position}
           scale={frame.scale}
           rotation={frame.rotation}
-          active={focus === frame.id || (focus === "festival" && (frame.id === "festival" || frame.id === "festival-flames"))}
-          onPick={() => onPick(frame.id === "festival-flames" ? "festival" : frame.id)}
+          active={
+            focus === frame.id ||
+            (focus === "home" && frame.id === "stack") ||
+            (focus === "about" && frame.id === "festival") ||
+            (focus === "contact" && frame.id === "my-mi")
+          }
+          onPick={() => onPick(pickTarget(frame.id))}
         />
       ))}
 
