@@ -1,14 +1,5 @@
-import {
-  ContactShadows,
-  Environment,
-  Float,
-  Html,
-  Image,
-  MeshReflectorMaterial,
-  RoundedBox,
-} from "@react-three/drei"
+import { ContactShadows, Environment, Image, MeshReflectorMaterial, RoundedBox } from "@react-three/drei"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
-import { Bloom, EffectComposer } from "@react-three/postprocessing"
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { frames, portrait, standing } from "@/data/photos"
@@ -16,17 +7,17 @@ import { frames, portrait, standing } from "@/data/photos"
 type View = { from: [number, number, number]; to: [number, number, number] }
 
 const views: Record<string, View> = {
-  home: { from: [1.85, 1.55, 4.15], to: [-1.55, 1.35, 0.1] },
-  festival: { from: [0.35, 1.75, 5.35], to: [2.15, 1.25, 0.45] },
-  "main-site": { from: [0.85, 1.55, 3.15], to: [2.55, 1.4, -0.35] },
-  "my-mi": { from: [-0.35, 1.65, 2.55], to: [-2.15, 0.55, -1.35] },
-  rooms: { from: [3.4, 2.35, 1.15], to: [0.15, 0.35, -2.45] },
-  events: { from: [-0.15, 1.55, 5.05], to: [1.1, 1.45, 2.55] },
-  infollion: { from: [3.85, 1.85, 0.15], to: [2.05, 0.45, -1.55] },
-  passes: { from: [0.05, 1.45, 5.25], to: [0, 0.95, 2.85] },
-  leadership: { from: [1.15, 1.65, 1.45], to: [3.05, 1.05, -2.25] },
-  stack: { from: [4.25, 2.55, 3.85], to: [0.15, 0.55, -0.15] },
-  contact: { from: [-1.15, 1.55, 1.15], to: [-3.35, 1.4, -1.95] },
+  home: { from: [2.6, 2.15, 8.6], to: [-0.15, 1.15, 0] },
+  festival: { from: [2.2, 2.2, 8.8], to: [2.1, 1.25, 0.15] },
+  "main-site": { from: [2.4, 2.15, 8.5], to: [1.5, 1.35, -0.55] },
+  "my-mi": { from: [1.6, 2.2, 8.4], to: [-1.8, 0.55, -1.2] },
+  rooms: { from: [3.4, 2.4, 8.2], to: [0.2, 0.4, -2.2] },
+  events: { from: [1.8, 2.15, 8.7], to: [2.1, 1.35, 1.2] },
+  infollion: { from: [3.6, 2.25, 8.3], to: [1.9, 0.5, -1.3] },
+  passes: { from: [2.0, 2.1, 8.8], to: [0.15, 0.85, 2.4] },
+  leadership: { from: [2.5, 2.2, 8.5], to: [3.2, 1.2, -1.4] },
+  stack: { from: [4.0, 2.55, 9.0], to: [0.4, 0.7, -0.2] },
+  contact: { from: [1.8, 2.15, 8.4], to: [-2.8, 1.25, -1.2] },
 }
 
 const home = views.home
@@ -45,7 +36,6 @@ function Photo({
   scale,
   rotation = [0, 0, 0],
   active,
-  label,
   onPick,
 }: {
   url: string
@@ -53,58 +43,46 @@ function Photo({
   scale: [number, number]
   rotation?: [number, number, number]
   active: boolean
-  label?: string
   onPick?: () => void
 }) {
-  const group = useRef<THREE.Group>(null)
   const glow = useRef<THREE.MeshStandardMaterial>(null)
 
   useFrame((_, delta) => {
     if (!glow.current) return
-    glow.current.emissiveIntensity = THREE.MathUtils.damp(glow.current.emissiveIntensity, active ? 0.55 : 0.08, 6, delta)
-    if (!group.current) return
-    const z = active ? 0.04 : 0
-    group.current.position.z = THREE.MathUtils.damp(group.current.position.z, z, 5, delta)
+    glow.current.emissiveIntensity = THREE.MathUtils.damp(glow.current.emissiveIntensity, active ? 0.28 : 0.04, 6, delta)
   })
 
   return (
     <group position={position} rotation={rotation}>
-      <group ref={group}>
-        <mesh position={[0, 0, -0.03]} castShadow>
-          <planeGeometry args={[scale[0] + 0.08, scale[1] + 0.08]} />
-          <meshStandardMaterial
-            ref={glow}
-            color="#1a1612"
-            roughness={0.45}
-            metalness={0.15}
-            emissive="#f25c2a"
-            emissiveIntensity={0.08}
-          />
-        </mesh>
-        <Image
-          url={url}
-          scale={scale}
-          radius={0.04}
-          toneMapped
-          castShadow
-          onClick={(event) => {
-            event.stopPropagation()
-            onPick?.()
-          }}
-          onPointerOver={(event) => {
-            event.stopPropagation()
-            if (onPick) document.body.style.cursor = "pointer"
-          }}
-          onPointerOut={() => {
-            document.body.style.cursor = ""
-          }}
+      <mesh position={[0, 0, -0.04]} castShadow>
+        <planeGeometry args={[scale[0] + 0.1, scale[1] + 0.1]} />
+        <meshStandardMaterial
+          ref={glow}
+          color="#16120f"
+          roughness={0.5}
+          metalness={0.12}
+          emissive="#f25c2a"
+          emissiveIntensity={0.04}
         />
-        {active && label ? (
-          <Html center position={[0, scale[1] / 2 + 0.22, 0.02]} distanceFactor={8} zIndexRange={[8, 0]}>
-            <div className="scene-label">{label}</div>
-          </Html>
-        ) : null}
-      </group>
+      </mesh>
+      <Image
+        url={url}
+        scale={scale}
+        radius={0.03}
+        toneMapped
+        zoom={1}
+        onClick={(event) => {
+          event.stopPropagation()
+          onPick?.()
+        }}
+        onPointerOver={(event) => {
+          event.stopPropagation()
+          if (onPick) document.body.style.cursor = "pointer"
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = ""
+        }}
+      />
     </group>
   )
 }
@@ -128,7 +106,7 @@ function Rig({ focus }: { focus: string }) {
   }, [camera, focus, reduce])
 
   useFrame((_, delta) => {
-    const lambda = reduce.current ? 40 : 2.4
+    const lambda = reduce.current ? 40 : 2.1
     const t = 1 - Math.exp(-lambda * delta)
     camera.position.lerp(goalPos.current, t)
     look.current.lerp(goalLook.current, t)
@@ -140,22 +118,21 @@ function Rig({ focus }: { focus: string }) {
 
 function Floor() {
   const width = useThree((state) => state.size.width)
-  const resolution = width < 700 ? 256 : 512
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-      <planeGeometry args={[28, 22]} />
+      <planeGeometry args={[32, 24]} />
       <MeshReflectorMaterial
-        blur={[280, 90]}
-        resolution={resolution}
-        mixBlur={0.85}
-        mixStrength={18}
-        roughness={0.82}
-        depthScale={0.35}
+        blur={[220, 70]}
+        resolution={width < 700 ? 192 : 384}
+        mixBlur={0.9}
+        mixStrength={12}
+        roughness={0.88}
+        depthScale={0.28}
         minDepthThreshold={0.35}
-        maxDepthThreshold={1.35}
-        color="#1c1814"
-        metalness={0.28}
-        mirror={0.15}
+        maxDepthThreshold={1.3}
+        color="#191512"
+        metalness={0.18}
+        mirror={0.08}
       />
     </mesh>
   )
@@ -167,10 +144,10 @@ function Systems({ focus, onPick }: { focus: string; onPick: (id: string) => voi
       {Array.from({ length: 7 }, (_, index) => (
         <RoundedBox
           key={`portal-${index}`}
-          args={[0.12, 0.72, 0.42]}
+          args={[0.12, 0.64, 0.38]}
           radius={0.03}
           smoothness={3}
-          position={[-2.55 + index * 0.24, 0.42, -1.45]}
+          position={[-2.4 + index * 0.22, 0.38, -1.55]}
           castShadow
           receiveShadow
           onClick={(event) => {
@@ -179,19 +156,18 @@ function Systems({ focus, onPick }: { focus: string; onPick: (id: string) => voi
           }}
         >
           <meshStandardMaterial
-            color={focus === "my-mi" ? "#d9c4a8" : "#c4b6a3"}
-            roughness={0.72}
-            metalness={0.08}
+            color={focus === "my-mi" ? "#d9c4a8" : "#b7a790"}
+            roughness={0.74}
             emissive="#f25c2a"
-            emissiveIntensity={focus === "my-mi" ? 0.28 : 0}
+            emissiveIntensity={focus === "my-mi" ? 0.18 : 0}
           />
         </RoundedBox>
       ))}
       <RoundedBox
-        args={[5.4, 0.46, 0.78]}
+        args={[4.8, 0.4, 0.7]}
         radius={0.08}
         smoothness={3}
-        position={[0.15, 0.24, -2.55]}
+        position={[0.1, 0.22, -2.7]}
         castShadow
         receiveShadow
         onClick={(event) => {
@@ -201,18 +177,18 @@ function Systems({ focus, onPick }: { focus: string; onPick: (id: string) => voi
       >
         <meshStandardMaterial
           color={focus === "rooms" ? "#cbb39a" : "#8c7a66"}
-          roughness={0.8}
+          roughness={0.82}
           emissive="#f25c2a"
-          emissiveIntensity={focus === "rooms" ? 0.22 : 0}
+          emissiveIntensity={focus === "rooms" ? 0.16 : 0}
         />
       </RoundedBox>
       {[
-        [-0.62, 0.78, 2.88],
-        [0.62, 0.78, 2.88],
+        [-0.55, 0.72, 3.05],
+        [0.55, 0.72, 3.05],
       ].map((position) => (
         <RoundedBox
           key={position.join("-")}
-          args={[0.16, 1.52, 0.16]}
+          args={[0.14, 1.4, 0.14]}
           radius={0.04}
           smoothness={3}
           position={position as [number, number, number]}
@@ -226,10 +202,10 @@ function Systems({ focus, onPick }: { focus: string; onPick: (id: string) => voi
         </RoundedBox>
       ))}
       <RoundedBox
-        args={[1.58, 0.14, 0.22]}
+        args={[1.42, 0.12, 0.18]}
         radius={0.04}
         smoothness={3}
-        position={[0, 1.56, 2.88]}
+        position={[0, 1.44, 3.05]}
         castShadow
         onClick={(event) => {
           event.stopPropagation()
@@ -240,17 +216,17 @@ function Systems({ focus, onPick }: { focus: string; onPick: (id: string) => voi
           color="#c4b6a3"
           roughness={0.65}
           emissive="#f25c2a"
-          emissiveIntensity={focus === "passes" ? 0.3 : 0}
+          emissiveIntensity={focus === "passes" ? 0.2 : 0}
         />
       </RoundedBox>
       {Array.from({ length: 5 }, (_, index) => (
         <RoundedBox
           key={`sheet-${index}`}
-          args={[1.18, 0.05, 0.78]}
+          args={[1.05, 0.045, 0.7]}
           radius={0.02}
           smoothness={2}
-          position={[2.05 + index * 0.05, 0.16 + index * 0.1, -1.55]}
-          rotation={[0, 0.18, 0.04 * index]}
+          position={[1.85 + index * 0.05, 0.14 + index * 0.09, -1.7]}
+          rotation={[0, 0.16, 0.03 * index]}
           castShadow
           onClick={(event) => {
             event.stopPropagation()
@@ -259,9 +235,9 @@ function Systems({ focus, onPick }: { focus: string; onPick: (id: string) => voi
         >
           <meshStandardMaterial
             color="#e6dccb"
-            roughness={0.55}
+            roughness={0.58}
             emissive="#f25c2a"
-            emissiveIntensity={focus === "infollion" && index === 2 ? 0.2 : 0}
+            emissiveIntensity={focus === "infollion" && index === 2 ? 0.14 : 0}
           />
         </RoundedBox>
       ))}
@@ -270,47 +246,28 @@ function Systems({ focus, onPick }: { focus: string; onPick: (id: string) => voi
 }
 
 function Scene({ focus, onPick }: { focus: string; onPick: (id: string) => void }) {
-  const reduce = useReduced()
-  const portraitActive = focus === "home"
-  const standingActive = focus === "contact"
-
   return (
     <>
-      <color attach="background" args={["#12100c"]} />
-      <fog attach="fog" args={["#12100c", 10, 22]} />
-      <hemisphereLight args={["#f4eadc", "#2a221c", 0.42]} />
+      <color attach="background" args={["#14110e"]} />
+      <fog attach="fog" args={["#14110e", 16, 32]} />
+      <hemisphereLight args={["#f4eadc", "#2a221c", 0.5]} />
       <directionalLight
-        position={[5.5, 8.5, 4.2]}
-        intensity={1.7}
+        position={[6, 9, 6]}
+        intensity={1.35}
         color="#fff3e4"
         castShadow
         shadow-mapSize={[1024, 1024]}
       />
-      <directionalLight position={[-4, 3.2, -2]} intensity={0.45} color="#8ab4d4" />
-      <Environment preset="warehouse" environmentIntensity={0.32} />
+      <directionalLight position={[-5, 3, 1]} intensity={0.35} color="#9bb6c9" />
+      <Environment preset="warehouse" environmentIntensity={0.22} />
       <Floor />
-      <ContactShadows opacity={0.38} scale={18} blur={2.6} far={6} />
-
-      <group position={portrait.position}>
-        {[
-          [-0.72, 0.72, -0.18],
-          [0.72, 0.72, -0.18],
-          [-0.72, 0.72, 0.22],
-          [0.72, 0.72, 0.22],
-        ].map((post) => (
-          <mesh key={post.join("-")} position={post as [number, number, number]} castShadow>
-            <cylinderGeometry args={[0.045, 0.05, 1.44, 12]} />
-            <meshStandardMaterial color="#c4b6a3" roughness={0.62} metalness={0.12} />
-          </mesh>
-        ))}
-      </group>
+      <ContactShadows opacity={0.32} scale={20} blur={2.8} far={6} />
 
       <Photo
         url={portrait.url}
         position={portrait.position}
         scale={portrait.scale}
-        active={portraitActive}
-        label="Vishwajeet Natu"
+        active={focus === "home"}
         onPick={() => onPick("home")}
       />
       <Photo
@@ -318,39 +275,24 @@ function Scene({ focus, onPick }: { focus: string; onPick: (id: string) => void 
         position={standing.position}
         scale={standing.scale}
         rotation={standing.rotation}
-        active={standingActive}
-        label="IIT Bombay"
+        active={focus === "contact"}
         onPick={() => onPick("contact")}
       />
 
-      {frames.map((frame) => {
-        const active =
-          focus === frame.id || (focus === "festival" && (frame.id === "festival" || frame.id === "festival-flames"))
-        const pick = () => onPick(frame.id === "festival-flames" ? "festival" : frame.id)
-        const node = (
-          <Photo
-            url={frame.url}
-            position={frame.position}
-            scale={frame.scale}
-            rotation={frame.rotation}
-            active={active}
-            label={frame.label}
-            onPick={pick}
-          />
-        )
-        if (reduce.current) return <group key={frame.id}>{node}</group>
-        return (
-          <Float key={frame.id} speed={0.6} rotationIntensity={0.08} floatIntensity={0.18}>
-            {node}
-          </Float>
-        )
-      })}
+      {frames.map((frame) => (
+        <Photo
+          key={frame.id}
+          url={frame.url}
+          position={frame.position}
+          scale={frame.scale}
+          rotation={frame.rotation}
+          active={focus === frame.id || (focus === "festival" && (frame.id === "festival" || frame.id === "festival-flames"))}
+          onPick={() => onPick(frame.id === "festival-flames" ? "festival" : frame.id)}
+        />
+      ))}
 
       <Systems focus={focus} onPick={onPick} />
       <Rig focus={focus} />
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.82} intensity={0.22} mipmapBlur />
-      </EffectComposer>
     </>
   )
 }
@@ -362,8 +304,8 @@ export function Massing({ focus, onPick }: { focus: string; onPick: (id: string)
       className="h-full w-full"
       style={{ touchAction: "pan-y" }}
       dpr={[1, 1.75]}
-      camera={{ fov: 34, near: 0.1, far: 60, position: home.from }}
-      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.08 }}
+      camera={{ fov: 40, near: 0.2, far: 70, position: home.from }}
+      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.98 }}
     >
       <Scene focus={focus} onPick={onPick} />
     </Canvas>
