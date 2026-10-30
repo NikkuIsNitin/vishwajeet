@@ -104,35 +104,26 @@
     linear-gradient(180deg, rgb(18 16 12 / 0.28) 0%, transparent 22%, transparent 62%, rgb(18 16 12 / 0.5) 100%);
 }
 
-.overlay-slot {
-  pointer-events: none;
-  position: fixed;
-  inset-inline: 1rem;
-  bottom: 1.1rem;
-  z-index: 20;
-  max-width: 22rem;
+.hero-film {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.6s ease;
 }
 
-.overlay-slot .overlay-panel {
-  pointer-events: auto;
+.work-stage {
+  max-width: 24rem;
+  padding: 1rem 1.1rem 1.15rem;
+  border: 1px solid rgb(243 236 224 / 0.1);
+  border-radius: 0.9rem;
+  background: rgb(18 16 12 / 0.62);
+  backdrop-filter: blur(10px);
 }
 
-@media (min-width: 1024px) {
-  .overlay-slot {
-    top: 28vh;
-    bottom: auto;
-    left: 2rem;
-    right: auto;
-  }
-}
-
-.overlay-panel {
-  padding: 1.15rem 1.3rem 1.25rem;
-  border: 1px solid rgb(243 236 224 / 0.12);
-  border-radius: 1rem;
-  background: rgb(18 16 12 / 0.72);
-  box-shadow: 0 18px 50px rgb(0 0 0 / 0.28);
-  backdrop-filter: blur(12px);
+.scroll-hint {
+  border: 1px solid rgb(243 236 224 / 0.22);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  background: rgb(18 16 12 / 0.35);
 }
 
 .scene-label {
