@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
+import { RoomSafe } from "@/components/room-safe"
 import { Badge } from "@/components/ui/badge"
 import {
   also,
@@ -22,6 +23,7 @@ const Massing = lazy(async () => {
 export default function App() {
   const reduce = useReducedMotion()
   const [focus, setFocus] = useState("home")
+  const [roomOn, setRoomOn] = useState(false)
   const [lane, setLane] = useState<"all" | Role>("all")
   const visible = useMemo(
     () => (lane === "all" ? work : work.filter((item) => item.roles.includes(lane))),
@@ -30,6 +32,10 @@ export default function App() {
   const activeWork = visible.find((item) => item.id === focus)
   const roomFocus = activeWork?.id ?? (focus === "home" ? "home" : focus === "about" ? "festival" : focus)
   const showFilm = focus === "home"
+
+  useEffect(() => {
+    if (!showFilm) setRoomOn(true)
+  }, [showFilm])
 
   useEffect(() => {
     const ids = ["home", "work", ...visible.map((item) => item.id), "about", "contact"]
@@ -69,20 +75,20 @@ export default function App() {
       </a>
 
       <div className="fixed inset-0 z-0">
-        <Suspense fallback={<img src="/media/hero-poster.jpg" alt="" className="h-full w-full object-cover" />}>
-          <div className={`h-full w-full ${showFilm ? "pointer-events-none opacity-0" : ""}`}>
-            <Massing focus={roomFocus} onPick={jump} />
-          </div>
-        </Suspense>
-        <div
-          className={`hero-film ${showFilm ? "opacity-100" : "opacity-0"}`}
-          aria-hidden={!showFilm}
-        >
-          {reduce ? (
-            <img src="/media/hero-poster.jpg" alt="" className="h-full w-full object-cover" />
-          ) : (
+        {roomOn ? (
+          <RoomSafe>
+            <Suspense fallback={null}>
+              <div className={`h-full w-full ${showFilm ? "pointer-events-none opacity-0" : ""}`}>
+                <Massing focus={roomFocus} onPick={jump} />
+              </div>
+            </Suspense>
+          </RoomSafe>
+        ) : null}
+        <div className={`hero-film ${showFilm ? "opacity-100" : "opacity-0"}`} aria-hidden={!showFilm}>
+          <img src="/media/hero-poster.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
+          {reduce ? null : (
             <video
-              className="h-full w-full object-cover"
+              className="relative h-full w-full object-cover"
               autoPlay
               muted
               loop

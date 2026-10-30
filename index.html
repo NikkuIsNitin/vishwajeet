@@ -10,15 +10,54 @@
       content="Vishwajeet Natu, IIT Bombay. Software engineer, full stack, tech PM. Web and Tech Head of the 55th Mood Indigo. Institute System Administrator, Hostel Affairs."
     />
     <title>Vishwajeet Natu</title>
+    <link rel="preload" as="image" href="/media/hero-poster.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,620;1,9..144,500&family=Outfit:wght@360;460;560&display=swap"
       rel="stylesheet"
     />
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #16140f url("/media/hero-poster.jpg") center / cover no-repeat;
+        color: #f3ece0;
+      }
+      #boot {
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.25rem;
+        text-align: center;
+        background: linear-gradient(180deg, rgb(18 16 12 / 0.32) 0%, transparent 26%, rgb(18 16 12 / 0.42) 100%);
+      }
+      #boot p {
+        margin: 0;
+        font: 0.82rem/1.4 Outfit, "Avenir Next", "Segoe UI", sans-serif;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #b7aea2;
+      }
+      #boot h1 {
+        margin: 0.7rem 0 0;
+        font: 500 clamp(2.6rem, 8vw, 4.6rem) / 0.92 Fraunces, "Iowan Old Style", Palatino, serif;
+        letter-spacing: -0.03em;
+      }
+      #root:not(:empty) + #boot {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="boot" aria-hidden="true">
+      <p>IIT Bombay · class of 2027</p>
+      <h1>Vishwajeet Natu</h1>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
