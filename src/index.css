@@ -70,6 +70,7 @@
 @layer base {
   html {
     color-scheme: dark;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -94,18 +95,58 @@
   }
 }
 
+.scene-vignette {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(18 16 12 / 0.58) 0%, rgb(18 16 12 / 0.12) 38%, transparent 58%),
+    linear-gradient(180deg, rgb(18 16 12 / 0.28) 0%, transparent 22%, transparent 62%, rgb(18 16 12 / 0.5) 100%);
+}
+
+.overlay-slot {
+  pointer-events: none;
+  position: fixed;
+  inset-inline: 1rem;
+  bottom: 1.1rem;
+  z-index: 20;
+  max-width: 26rem;
+}
+
+.overlay-slot .overlay-panel {
+  pointer-events: auto;
+}
+
+@media (min-width: 1024px) {
+  .overlay-slot {
+    top: 22vh;
+    bottom: auto;
+    left: 2.4rem;
+    right: auto;
+  }
+}
+
+.overlay-panel {
+  padding: 1.15rem 1.3rem 1.25rem;
+  border: 1px solid rgb(243 236 224 / 0.12);
+  border-radius: 1rem;
+  background: rgb(18 16 12 / 0.72);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 0.28);
+  backdrop-filter: blur(12px);
+}
+
 .scene-label {
   pointer-events: none;
   white-space: nowrap;
   border-radius: 0.4rem;
-  background: rgb(22 20 15 / 0.86);
+  background: rgb(18 16 12 / 0.86);
   padding: 0.28rem 0.55rem;
   font-size: 0.72rem;
   letter-spacing: 0.01em;
   color: #f3ece0;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 639px) {
   .scene-label {
     display: none;
   }
